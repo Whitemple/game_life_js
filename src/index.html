@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/index.css">
+    <script src="/index.js" defer></script>
+    <title>Game of life</title>
+</head>
+<body>
+    <div class="cont">
+        
+        <div class="modalWindow"></div>
+
+        <h1 id="title">Игра "Жизнь"</h1>
+        <div id="world"></div>
+        <h2 class="subTitle">Правила игры:</h2>
+        <ol class="navPanel">
+            <li class="navPanel__li">Задайте ширину и высоту поля для игры и нажмите кнопку "Создать"</li>
+            <li class="navPanel__li">Нажмите на клетку чтобы сделать ее живой</li>
+            <li class="navPanel__li">Нажмите на кнопку "Начать игру!" чтобы запустить игру и ее раз нажмите для паузы</li>
+            <li class="navPanel__li">Нажмите на кнопку "Сброс" для сброса игры</li>
+        </ol>
+        <div class="navButtons">
+            <h3 class="subTitle">Панель навигации</h3>
+            <nav class="navButtons__panel">
+                <div class="navButtons__buttons">
+                    <button id="startBtn" class="hoverCursor">Начать игру!</button>
+                    <button id="reset" class="hoveroursor">Сброс</button>
+                </div>
+        
+                <div>
+                    <label for="speed" id="evolutionSpeedTitle">Скорость эволюции</label>
+                    <input type="range" name="speed" id="speed" min="300" max="3000" step="100" class="hoverCursor">
+                </div>
+            </nav>
+            
+        </div>
+        <div class="initParamsBox">
+            <form method="get">
+                <div>
+                    <input type="number" name="row" class="initNumbers" id="row" min="10" max="50" placeholder="Ширина">
+                    <input type="number" name="column" class="initNumbers" id="column" min="10" max="50" placeholder="Высота">
+                </div>
+                <input type="button" value="Создать мир" name="submit" id="sub" class="hoverCursor">
+            </form>
+        </div>
+        <footer class="footer">
+            All Rights reserved
+        </footer>
+    </div>
+</body>
+</html>
