@@ -2,25 +2,14 @@ import './index.html';
 import './index.scss';
 
 
-let rows;
-let columns;
 
-let world = document.querySelector('#world');
-const startBtn = document.querySelector('#startBtn');
-const resetBtn = document.querySelector('#reset');
-
-const navButtons = document.querySelector('.navButtons');
-const initParamsBox = document.querySelector('.initParamsBox');
 
 const mediaQuery320 = window.matchMedia('(min-width: 320px)')
 const mediaQuery425 = window.matchMedia('(min-width: 425px)')
 const mediaQuery768 = window.matchMedia('(min-width: 768px)')
 const mediaQuery1024 = window.matchMedia('(min-width: 1024px)')
 
-let started=false;// Set to true when use clicks start
-let timer;//To control evolutions
-let lifeSpeed = document.querySelector('#speed');
-let lifeSpeedValue = 1000;
+
 
 const modalWindowErrors = document.querySelector('.modalWindow');
 
@@ -48,6 +37,11 @@ sub.addEventListener('click', () => {
 
     let userRowValue = userRow.value;
     let userColumnValue = userColumn.value;
+
+    let rows;
+    let columns;
+
+
 
     if(mediaQuery320.matches && !mediaQuery425.matches && !mediaQuery768.matches && !mediaQuery1024.matches){
         console.log('MODILE: 320 to 424');
@@ -108,15 +102,24 @@ sub.addEventListener('click', () => {
     
 
     if(rows && columns){
+        const navButtons = document.querySelector('.navButtons');
+        const initParamsBox = document.querySelector('.initParamsBox');
         navButtons.style.display = 'block';
         initParamsBox.style.display = 'none';
-        beginWorld();
-
-
-
-    }
+        let world = document.querySelector('#world');
+        const startBtn = document.querySelector('#startBtn');
+        const resetBtn = document.querySelector('#reset');
     
-})
+        
+    
+        let started=false;// Set to true when use clicks start
+        let timer;//To control evolutions
+        let lifeSpeed = document.querySelector('#speed');
+        let lifeSpeedValue = 1000;
+
+
+
+
 
 
 
@@ -128,23 +131,27 @@ sub.addEventListener('click', () => {
 
 
 
+
+
         // create 2D Arrays
         let currentGeneration = [rows];
         let nextGeneration = [rows];
 
-
-        function createGenerationArrays(){
-            for (let i = 0; i < rows; i++) {
-                currentGeneration[i] = new Array(columns);
-                nextGeneration[i] = new Array(columns);
-                
-            }
-        }
-        function initialGenerationArrays(){
-            for (let i = 0; i < rows; i++) {
-                for (let k = 0; k < columns; k++) {
-                    currentGeneration[i][k] = 0;
-                    nextGeneration[i][k] = 0;
+        // addEventListener
+        function cellClick(data) {
+            let loc = data.target.id.split("_");
+            // console.log(loc);
+            let row = Number(loc[0]);//Get i
+            let col = Number(loc[1]);//Get j
+            // Toggle cell alive or dead
+            if(data.target.localName==='td'){
+                if (data.target.className==='alive'){
+                    data.target.setAttribute('class', 'dead');
+                    currentGeneration[row][col] = 0;
+                }
+                else{
+                    data.target.setAttribute('class', 'alive');
+                    currentGeneration[row][col] = 1;
                 }
             }
         }
@@ -168,25 +175,30 @@ sub.addEventListener('click', () => {
             world.addEventListener('click', cellClick);
             
         }
+        createWorld();
 
-        // addEventListener
-        function cellClick(data) {
-            let loc = data.target.id.split("_");
-            // console.log(loc);
-            let row = Number(loc[0]);//Get i
-            let col = Number(loc[1]);//Get j
-            // Toggle cell alive or dead
-            if(data.target.localName==='td'){
-                if (data.target.className==='alive'){
-                    data.target.setAttribute('class', 'dead');
-                    currentGeneration[row][col] = 0;
-                }
-                else{
-                    data.target.setAttribute('class', 'alive');
-                    currentGeneration[row][col] = 1;
+
+        function createGenerationArrays(){
+            for (let i = 0; i < rows; i++) {
+                currentGeneration[i] = new Array(columns);
+                nextGeneration[i] = new Array(columns);
+                
+            }
+        }
+        createGenerationArrays()
+        function initialGenerationArrays(){
+            for (let i = 0; i < rows; i++) {
+                for (let k = 0; k < columns; k++) {
+                    currentGeneration[i][k] = 0;
+                    nextGeneration[i][k] = 0;
                 }
             }
         }
+        initialGenerationArrays()
+
+
+
+
 
 
 
@@ -253,42 +265,42 @@ sub.addEventListener('click', () => {
             return count;
         }
 
-                // Define conditions of cell
-                function createNextGeneration() {
-                    for (row in currentGeneration) {
-                        for (col in currentGeneration[row]) {
-                        
-                            let neighbors = getNeighborsCounter(row, col);
-                        
-                            // Check the rules
-                            // If Alive
-                            if (currentGeneration[row][col] == 1) {
-                            
-                                if (neighbors < 2) {
-                                    nextGeneration[row][col] = 0;
-                                } else if (neighbors == 2 || neighbors == 3) {
-                                    nextGeneration[row][col] = 1;
-                                } else if (neighbors > 3) {
-                                    nextGeneration[row][col] = 0;
-                                }
-                            } else if (currentGeneration[row][col] == 0) {
-                                // If Dead or Empty
-                            
-                                if (neighbors == 3) {
-                                    // Propogate the species
-                                    nextGeneration[row][col] = 1;//Birth?
-                                }
-                            }
+        // Define conditions of cell
+        function createNextGeneration() {
+            for (let row in currentGeneration) {
+                for (let col in currentGeneration[row]) {
+                
+                    let neighbors = getNeighborsCounter(row, col);
+                
+                    // Check the rules
+                    // If Alive
+                    if (currentGeneration[row][col] == 1) {
+                    
+                        if (neighbors < 2) {
+                            nextGeneration[row][col] = 0;
+                        } else if (neighbors == 2 || neighbors == 3) {
+                            nextGeneration[row][col] = 1;
+                        } else if (neighbors > 3) {
+                            nextGeneration[row][col] = 0;
+                        }
+                    } else if (currentGeneration[row][col] == 0) {
+                        // If Dead or Empty
+                    
+                        if (neighbors == 3) {
+                            // Propogate the species
+                            nextGeneration[row][col] = 1;//Birth?
                         }
                     }
                 }
+            }
+        }
 
         // 
 
         function updateCurrentGeneration() {
             
-            for (row in currentGeneration) {
-                for (col in currentGeneration[row]) {
+            for (let row in currentGeneration) {
+                for (let col in currentGeneration[row]) {
                     // Update the current generation with
                     // the results of createNextGen function
                     currentGeneration[row][col] = nextGeneration[row][col];
@@ -300,8 +312,8 @@ sub.addEventListener('click', () => {
         }
         function updateWorld() {
             let cell='';
-            for (row in currentGeneration) {
-                for (col in currentGeneration[row]) {
+            for (let row in currentGeneration) {
+                for (let col in currentGeneration[row]) {
                     // cell = document.getElementById(row + '_' + col);
                     cell = document.getElementById(`${row}_${col}`);
                     if (currentGeneration[row][col] == 0) {
@@ -336,7 +348,14 @@ sub.addEventListener('click', () => {
             if(!started){
                 started = true;
                 startBtn.innerText = 'Остановить игры';
-                startLife();
+                createNextGeneration();//Apply the rules
+                updateCurrentGeneration();//Set Current values from new generation
+                updateWorld();//Update the world view
+                // check()
+                if(started){
+                    timer = (setTimeout(startLife, lifeSpeedValue));
+                    // setTimeout(check, lifeSpeedValue)
+                }
             } else {
                 started = false;
                 startBtn.innerText = 'Начать игру!';
@@ -357,8 +376,12 @@ sub.addEventListener('click', () => {
         resetBtn.addEventListener('click', resetData);
 
 
-        function beginWorld(){
-            createWorld();
-            createGenerationArrays();
-            initialGenerationArrays();
-        }
+        // function beginWorld(){
+        //     createWorld();
+        //     createGenerationArrays();
+        //     initialGenerationArrays();
+        // }
+
+    }
+    
+})
